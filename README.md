@@ -1,37 +1,37 @@
 # my-skill-workflows
 
-Sammlung von zwei Entwicklungs-Workflows für [Claude Code](https://claude.com/claude-code), aufgebaut aus Skills (und Subagents). Beide führen ein Vorhaben strukturiert von der Idee über Planung und Umsetzung bis zum Abschluss und halten die Projektdokumentation dabei aktuell.
+A collection of two development workflows for [Claude Code](https://claude.com/claude-code), built from skills (and subagents). Both take a piece of work in a structured way from idea through planning and implementation to completion, keeping the project documentation up to date along the way.
 
 ## Workflows
 
 ### `spec-driven/`
 
-Ein Workflow, der Features über eine Spezifikation und vertikale Slices plant und umsetzt.
+A workflow that plans and builds features through a specification and vertical slices.
 
-- **Planung:** Ein Feature wird in Interview-Runden aus Nutzersicht beschrieben (`/feature`) und in eine Spezifikation sowie eine Roadmap aus Slices überführt.
-- **Umsetzung:** Pro Slice werden die technischen Entscheidungen geklärt und ein Scope geschrieben (`/slice`), dann von einem Builder- und Reviewer-Subagent umgesetzt (`/implement`).
-- **Abschluss:** Slices und Features werden abgeschlossen, gemergt und die Projektdokumente (README, AGENTS, Architektur, Glossar, Roadmap, ADRs) nachgezogen.
-- **Abkürzungen:** `/fast-lane` für ein ganzes Feature auf einmal, `/one-shot` für kleine Änderungen und Bugfixes.
+- **Planning:** A feature is described from the user's point of view in interview rounds (`/feature`) and turned into a specification and a roadmap of slices.
+- **Implementation:** For each slice, the technical decisions are settled and a scope is written (`/slice`), then built by a builder and reviewer subagents (`/implement`).
+- **Completion:** Slices and features are closed and merged, and the project documents (README, AGENTS, architecture, glossary, roadmap, ADRs) are brought up to date.
+- **Shortcuts:** `/fast-lane` for a whole feature at once, `/one-shot` for small changes and bug fixes.
 
 ### `ticket-driven/`
 
-Ein Workflow, der Features in Klärungs- und Implementierungs-Tickets zerlegt und abarbeitet.
+A workflow that breaks features down into clarification and implementation tickets and works through them.
 
-- **Planung:** Ein Feature wird per Brainstorming/Interview zu einer Spezifikation ausgearbeitet; offene Punkte werden als Klärungs-Tickets gelöst (Brainstorming, Prototyp, Recherche, ADR).
-- **Umsetzung:** Die fertige Spezifikation wird in Implementierungs-Tickets mit Abhängigkeiten aufgeteilt und per Build-und-Review-Schleife umgesetzt.
-- **Abkürzungen:** `/quick` für kleine, klare Änderungen, `/feature-light` für mittelgroße Vorhaben.
-- **Zusätzlich:** Audits (Bugs, Security, Performance, Refactoring, Usability), Hilfen zum Verstehen des Codes (Erklärungen, Lektionen, Review-Puzzles) und Pflege der Projektdokumentation. Mitgelieferte Subagents liegen unter `agents/`.
+- **Planning:** A feature is worked out into a specification via brainstorming/interview; open points are resolved as clarification tickets (brainstorming, prototype, research, ADR).
+- **Implementation:** The settled specification is split into implementation tickets with dependencies and built in a build-and-review loop.
+- **Shortcuts:** `/quick` for small, clear changes, `/feature-light` for mid-sized changes.
+- **Additionally:** Audits (bugs, security, performance, refactoring, usability), aids for understanding the code (explanations, lessons, review puzzles) and maintenance of the project documentation. The included subagents are in `agents/`.
 
-## Struktur
+## Structure
 
 ```
 spec-driven/
-  skills/        # Skills des spec-driven Workflows
+  skills/        # skills of the spec-driven workflow
 ticket-driven/
-  skills/        # Skills des ticket-driven Workflows
-  agents/        # zugehörige Subagents
+  skills/        # skills of the ticket-driven workflow
+  agents/        # related subagents
 ```
 
-## Verwendung
+## Usage
 
-Die Skills eines Workflows (und ggf. die Agents) in das `.claude/skills/` bzw. `.claude/agents/` Verzeichnis eines Projekts oder des Benutzers kopieren. Anschließend einmalig `/skill-setup` im Projekt ausführen, um es für den Workflow vorzubereiten.
+Copy the skills of one workflow (and the agents, if any) into the `.claude/skills/` or `.claude/agents/` directory of a project or of your user. Then run `/skill-setup` once in the project to prepare it for the workflow.
