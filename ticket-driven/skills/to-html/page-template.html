@@ -1,0 +1,249 @@
+<!--
+  /to-html page template — the house style. Copy this file, keep the <style> block whole, fill the
+  sections. Only two things change per page: the accent tokens (pick one pair from SKILL.md ›
+  Accent) and the picture in section 2 (pick one form from pictures.md).
+
+  Every {curly placeholder} is replaced; every section without content is deleted with its
+  heading. Delete this comment and all other HTML comments before publishing.
+-->
+<title>{Name, two to four words}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* House style to-html: one reading column; head → picture (today/after) → how → gains → why → left out → open → source.
+   Per page only --accent / --accent-soft (both themes) and the picture change. */
+:root {
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --ink: #191d24;
+  --muted: #5d6470;
+  --line: #d9dde3;
+  --old: #b9bfc9;
+  --accent: #2f5bd3;
+  --accent-soft: #e5ecfb;
+  --warn: #9a6200;
+  --warn-soft: #fbf1dc;
+  --screen-bg: #0d1110;
+  --screen-line: #26302c;
+  --screen-text: #b9c4be;
+  --screen-ink: #f2c200;
+  --rec: #e5484d;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151a; --surface: #1a1e25; --ink: #e7eaf0; --muted: #9ba2ae; --line: #2c323c; --old: #4a515d;
+    --accent: #7ea2ff; --accent-soft: #1d2846; --warn: #f0b54a; --warn-soft: #2e2512;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151a; --surface: #1a1e25; --ink: #e7eaf0; --muted: #9ba2ae; --line: #2c323c; --old: #4a515d;
+  --accent: #7ea2ff; --accent-soft: #1d2846; --warn: #f0b54a; --warn-soft: #2e2512;
+  color-scheme: dark;
+}
+
+/* ── base ── */
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 17px; line-height: 1.55; }
+.page { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 40px 56px; display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 6vw, 2.8rem); line-height: 1.08; letter-spacing: -0.01em; }
+h2 { font-size: 1.35rem; line-height: 1.2; }
+h3 { font-size: 1.05rem; line-height: 1.3; }
+p { margin: 0; }
+ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+code { font-family: var(--f-mono); font-size: .82em; }
+kbd { font-family: var(--f-mono); font-size: .8rem; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; background: var(--bg); }
+section { display: grid; gap: 16px; }
+.note { color: var(--muted); font-size: .92rem; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── 1 head ── */
+.hero { display: grid; gap: 14px; }
+.eyebrow { font-size: .78rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 700; }
+.lead { font-size: 1.2rem; max-width: 34em; }
+.status { font-size: .85rem; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; width: fit-content; }
+.status.planned { color: var(--warn); background: var(--warn-soft); }
+
+/* ── 2 picture: shared parts ── */
+.figure { display: grid; gap: 16px; }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.side { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.side-label { font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; }
+.legend { display: flex; gap: 18px; font-size: .85rem; color: var(--muted); flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+
+/* picture form: screen (a device or app view, before/after) */
+.screen { background: var(--screen-bg); border-radius: 10px; padding: 10px; display: grid; gap: 6px; }
+.screen-head { display: flex; justify-content: space-between; gap: 8px; font-family: var(--f-mono); font-size: .7rem; color: var(--screen-text); }
+.screen svg, .screen canvas { width: 100%; height: auto; display: block; }
+.screen.frozen { opacity: .55; }
+.rec { display: inline-flex; align-items: center; gap: 6px; color: var(--rec); }
+.rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); animation: blink 1s steps(2, start) infinite; }
+@keyframes blink { to { visibility: hidden; } }
+.window { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; }
+.window-bar { display: flex; gap: 6px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: .8rem; color: var(--muted); }
+.window-bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--old); display: inline-block; }
+.window-body { padding: 12px; display: grid; gap: 8px; font-size: .9rem; }
+.mock-line { height: 10px; border-radius: 4px; background: var(--line); }
+.mock-new { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+/* picture form: sizes to scale */
+.size { display: grid; gap: 5px; }
+.size-name { font-weight: 700; }
+.size-name small { font-weight: 400; color: var(--muted); }
+.bar-row { display: grid; grid-template-columns: 4.6rem 1fr; gap: 10px; align-items: center; font-size: .85rem; color: var(--muted); }
+.track { display: flex; gap: 3px; min-width: 0; }
+.bar { height: 14px; border-radius: 3px; }
+.bar.old { background: var(--old); }
+.bar.new { background: var(--accent); }
+.bar.moved { border: 1.5px dashed var(--accent); }
+.num { font-family: var(--f-mono); font-size: .8rem; font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; margin-left: 8px; align-self: center; }
+
+/* picture form: twice → once */
+.copies { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.copy { border: 1px solid var(--line); border-radius: 8px; padding: 8px; display: grid; gap: 6px; font-size: .9rem; background: var(--surface); }
+.copy b { font-family: var(--f-display); }
+.dup { border-radius: 6px; padding: 4px 8px; font-size: .82rem; background: var(--old); color: var(--ink); }
+.shared { border-radius: 8px; padding: 8px; text-align: center; font-size: .9rem; background: var(--accent); color: var(--surface); font-weight: 700; }
+.count { font-family: var(--f-display); font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.count.bad { color: var(--muted); }
+.count.good { color: var(--accent); }
+
+/* picture form: flow */
+.flow { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.flow li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.flow li + li::before { content: "→"; color: var(--muted); font-size: 1.1rem; }
+.node { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: .92rem; }
+.node.hot { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.node.fail { border-style: dashed; color: var(--muted); }
+.branch { display: grid; gap: 6px; padding-left: 14px; border-left: 2px solid var(--line); font-size: .9rem; color: var(--muted); }
+
+/* picture form: options (a decision) */
+.options { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.option { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.option.chosen { border: 2px solid var(--accent); }
+.option .tag { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--muted); }
+.option.chosen .tag { color: var(--accent); }
+.option ul { font-size: .9rem; }
+.pro::marker { content: "+  "; color: var(--accent); }
+.con::marker { content: "–  "; color: var(--muted); }
+
+/* picture form: timeline (a plan) */
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+.timeline li { position: relative; padding: 0 0 18px 20px; display: grid; gap: 2px; }
+.timeline li::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--old); }
+.timeline li.done::before { background: var(--accent); border-color: var(--accent); }
+.timeline li.next::before { border-color: var(--accent); }
+.timeline .when { font-size: .8rem; color: var(--muted); }
+.timeline .waits { font-size: .85rem; color: var(--warn); }
+
+/* ── 3 how ── */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; counter-reset: s; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.steps li::before { content: counter(s); font-family: var(--f-display); font-weight: 700; color: var(--accent); font-size: 1.4rem; line-height: 1; }
+
+/* ── 4 gains ── */
+.gains { display: grid; gap: 10px; }
+.gain { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; align-items: baseline; }
+.gain b { color: var(--accent); font-family: var(--f-display); }
+
+/* ── 5 why ── */
+.decisions { display: grid; border-top: 1px solid var(--line); }
+.decision { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 8px 24px; padding-block: 16px; border-bottom: 1px solid var(--line); }
+.decision > div { display: grid; gap: 4px; }
+.decision .alt { color: var(--muted); font-size: .9rem; }
+.decision .guess { color: var(--muted); font-size: .9rem; font-style: italic; }
+.src { font-size: .78rem; color: var(--muted); font-family: var(--f-mono); }
+
+/* ── 6 left out ── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px dashed var(--line); border-radius: 999px; padding: 4px 12px; font-size: .92rem; color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--muted) 50%, transparent); }
+
+/* ── 7 open / fine print ── */
+.open { background: var(--warn-soft); border-radius: 10px; padding: 16px 18px; display: grid; gap: 8px; }
+.open strong { color: var(--warn); }
+
+/* ── 8 source ── */
+footer { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); padding-top: 14px; }
+
+@media (max-width: 620px) {
+  .compare { grid-template-columns: 1fr; }
+  .decision { grid-template-columns: 1fr; }
+  .gain { grid-template-columns: 1fr; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rec::before { animation: none; }
+}
+</style>
+
+<main class="page">
+
+  <!-- 1 · Head -->
+  <header class="hero">
+    <span class="eyebrow">{Kind} · {name or folder}</span>
+    <h1>{What changes, in everyday words}</h1>
+    <p class="lead">{One or two sentences: what it is and what the reader gets from it.}</p>
+    <span class="status">{Status}</span> <!-- add class "planned" while nothing is built -->
+  </header>
+
+  <!-- 2 · Picture: exactly one form from pictures.md -->
+  <section aria-labelledby="h-picture">
+    <h2 id="h-picture">{Today and after}</h2>
+    <div class="figure">
+      {picture}
+    </div>
+  </section>
+
+  <!-- 3 · How: two to four steps in real order -->
+  <section aria-labelledby="h-how">
+    <h2 id="h-how">{How it works}</h2>
+    <ol class="steps">
+      <li><strong>{Step}</strong><span>{One or two sentences.}</span></li>
+    </ol>
+  </section>
+
+  <!-- 4 · Gains: two or three -->
+  <section aria-labelledby="h-gains">
+    <h2 id="h-gains">{What it brings}</h2>
+    <div class="gains">
+      <div class="gain"><b>{One or two words}</b><p>{The gain, concretely.}</p></div>
+    </div>
+  </section>
+
+  <!-- 5 · Why: at most three decisions -->
+  <section aria-labelledby="h-why">
+    <h2 id="h-why">{Why it is built this way}</h2>
+    <div class="decisions">
+      <div class="decision">
+        <h3>{The decision, as a short statement}</h3>
+        <div>
+          <p>{The reason, in one or two sentences.}</p>
+          <p class="alt">{Rejected: the alternative, if a source names one.}</p>
+        </div>
+      </div>
+    </div>
+    <p class="src">{Source: where the reasons are written down}</p>
+  </section>
+
+  <!-- 6 · Left out -->
+  <section aria-labelledby="h-out">
+    <h2 id="h-out">{Deliberately left out}</h2>
+    <div class="chips">
+      <span class="chip">{Thing}</span>
+    </div>
+  </section>
+
+  <!-- 7 · Open / fine print -->
+  <div class="open">
+    <strong>{Still open}</strong>
+    <p>{The risk or question, and what happens next about it.}</p>
+  </div>
+
+  <!-- 8 · Source -->
+  <footer>{Summarized from: files, with their size}</footer>
+</main>

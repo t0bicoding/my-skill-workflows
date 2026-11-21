@@ -1,0 +1,185 @@
+<!--
+  /prototype decision block — the interactive part of the decision page (DECISIONS.md).
+  The page itself is a /to-html page: copy ../to-html/page-template.html, keep its <style> block
+  whole, append the CSS below to it, and use the markup and script below for sections 5 and 8.
+
+  Every {curly placeholder} is replaced, labels in the chat language (DECISIONS.md › Labels).
+  Class names avoid the template's own (.option, .decision, .copy, .rec). Delete this comment and
+  all other HTML comments before publishing.
+-->
+
+<style>
+/* ── 5 decide (prototype decision page) ── */
+.choices { display: grid; gap: 32px; }
+.choice { display: grid; gap: 12px; }
+.choice-head { display: grid; gap: 4px; }
+.choice-head .why { color: var(--muted); font-size: .95rem; }
+.picks { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.pick { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 8px; align-content: start; cursor: pointer; min-width: 0; }
+.pick input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+.pick:has(input:checked) { border: 2px solid var(--accent); padding: 13px; }
+.pick:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pick .tag { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--muted); }
+.pick:has(input:checked) .tag { color: var(--accent); }
+.pick ul { font-size: .9rem; }
+.advised { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; width: fit-content; }
+.pick textarea, .choice .note-field { font: inherit; font-size: .92rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; width: 100%; box-sizing: border-box; }
+.pick textarea { resize: vertical; min-height: 3.2em; }
+.advice { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; font-size: .95rem; }
+
+/* ── 8 prompt ── */
+.prompt-box { display: grid; gap: 10px; }
+.prompt-box textarea { font-family: var(--f-mono); font-size: .82rem; line-height: 1.5; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; width: 100%; min-height: 13rem; box-sizing: border-box; resize: vertical; }
+.prompt-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.copy-btn { font: inherit; font-weight: 700; color: var(--surface); background: var(--accent); border: 0; border-radius: 999px; padding: 8px 18px; cursor: pointer; }
+.copy-state { color: var(--muted); font-size: .9rem; }
+</style>
+
+<!-- 5 · Decisions: one .choice per decision, one to five -->
+<section aria-labelledby="h-decide">
+  <h2 id="h-decide">{Your decisions}</h2>
+  <div class="choices">
+
+    <!-- data-key: short id (D1, D2 …); data-question: the question in a few words, for the prompt;
+         data-recommended: value of the recommended option, or "" when the evidence is balanced -->
+    <div class="choice" data-key="D1" data-question="{Question in a few words}" data-recommended="b">
+      <div class="choice-head">
+        <h3 id="q-D1">{1 · The question, as a question}</h3>
+        <p class="why">{What depends on it, and where to see it in the prototype.}</p>
+      </div>
+      <div class="picks" role="radiogroup" aria-labelledby="q-D1">
+        <label class="pick">
+          <input type="radio" name="D1" value="a" data-label="{Option A, short}">
+          <span class="tag">A</span>
+          <strong>{Option A}</strong>
+          <ul><li class="pro">{Pro}</li><li class="con">{Con}</li></ul>
+        </label>
+        <!-- the recommended option: `checked` and the badge -->
+        <label class="pick">
+          <input type="radio" name="D1" value="b" data-label="{Option B, short}" checked>
+          <span class="tag">B</span>
+          <span class="advised">{Recommended}</span>
+          <strong>{Option B}</strong>
+          <ul><li class="pro">{Pro}</li><li class="con">{Con}</li></ul>
+        </label>
+        <label class="pick">
+          <input type="radio" name="D1" value="other" data-label="{Other}">
+          <span class="tag">{Other}</span>
+          <textarea rows="2" aria-label="{Other}" placeholder="{e.g. header from B with the list from C}"></textarea>
+        </label>
+      </div>
+      <p class="advice"><b>{My recommendation:} {Option B}.</b> {Why, in one or two sentences, from evidence.}</p>
+      <input class="note-field" type="text" aria-label="{Note (optional)}" placeholder="{Note (optional)}">
+    </div>
+
+  </div>
+</section>
+
+<!-- 8 · Prompt -->
+<section aria-labelledby="h-prompt">
+  <h2 id="h-prompt">{Your decisions as a prompt}</h2>
+  <div class="prompt-box">
+    <textarea id="prompt" readonly aria-labelledby="h-prompt"></textarea>
+    <div class="prompt-actions">
+      <button type="button" class="copy-btn" id="copy">{Copy prompt}</button>
+      <span class="copy-state" id="copy-state" aria-live="polite"></span>
+    </div>
+  </div>
+</section>
+
+<script>
+// Labels and the prototype's identity, in the chat language.
+const PROTOTYPE = "{<root>/<area>/<question-slug>}";
+const QUESTION = "{The prototype's question}";
+const L = {
+  head: "{Decisions on the prototype}",
+  question: "{Question}",
+  open: "{still open}",
+  asRecommended: "{as recommended}",
+  recommendedWas: "{recommendation was:}",
+  other: "{Other}",
+  note: "{Note}",
+  close: "{Capture the answer and the prototype as /prototype says.}",
+  copied: "{Copied — paste it into the chat.}",
+  selected: "{Selected — copy with Ctrl+C.}",
+};
+
+const STORE = "prototype-decisions:" + PROTOTYPE;
+const choices = [...document.querySelectorAll(".choice")];
+const promptBox = document.getElementById("prompt");
+
+function answer(c) {
+  const picked = c.querySelector("input[type=radio]:checked");
+  if (!picked) return L.open;
+  const rec = c.dataset.recommended;
+  let text = picked.value === "other"
+    ? L.other + ": " + (c.querySelector(".pick textarea").value.trim() || "…")
+    : picked.dataset.label;
+  if (rec) {
+    const recLabel = c.querySelector(`input[value="${rec}"]`).dataset.label;
+    text += picked.value === rec ? ` (${L.asRecommended})` : ` (${L.recommendedWas} ${recLabel})`;
+  }
+  const note = c.querySelector(".note-field").value.trim();
+  if (note) text += ` · ${L.note}: ${note}`;
+  return text;
+}
+
+function render() {
+  promptBox.value = [
+    `${L.head} ${PROTOTYPE}`,
+    `${L.question}: ${QUESTION}`,
+    "",
+    ...choices.map((c, i) => `${i + 1}. ${c.dataset.question}: ${answer(c)}`),
+    "",
+    L.close,
+  ].join("\n");
+  save();
+}
+
+// Per-viewer convenience only: the page works the same without storage.
+function save() {
+  const state = choices.map(c => ({
+    picked: c.querySelector("input[type=radio]:checked")?.value ?? null,
+    other: c.querySelector(".pick textarea").value,
+    note: c.querySelector(".note-field").value,
+  }));
+  try { localStorage.setItem(STORE, JSON.stringify(state)); } catch {}
+}
+function restore() {
+  let state = null;
+  try { state = JSON.parse(localStorage.getItem(STORE)); } catch {}
+  if (!Array.isArray(state)) return;
+  choices.forEach((c, i) => {
+    const s = state[i];
+    if (!s) return;
+    const radio = s.picked && c.querySelector(`input[value="${s.picked}"]`);
+    if (radio) radio.checked = true;
+    c.querySelector(".pick textarea").value = s.other ?? "";
+    c.querySelector(".note-field").value = s.note ?? "";
+  });
+}
+
+choices.forEach(c => {
+  c.addEventListener("change", render);
+  c.addEventListener("input", e => {
+    // typing into Other selects it
+    if (e.target.matches(".pick textarea")) c.querySelector('input[value="other"]').checked = true;
+    render();
+  });
+});
+
+document.getElementById("copy").addEventListener("click", async () => {
+  const state = document.getElementById("copy-state");
+  try {
+    await navigator.clipboard.writeText(promptBox.value);
+    state.textContent = L.copied;
+  } catch {
+    promptBox.focus();
+    promptBox.select();
+    state.textContent = L.selected;
+  }
+});
+
+restore();
+render();
+</script>

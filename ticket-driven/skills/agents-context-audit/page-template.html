@@ -1,0 +1,426 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Context load report: one reading column; head → context curve per session (line) → start load
+   composition (one stacked bar) → what fills the context (bars) → listings → growth steps →
+   repeated reads and big results → findings → proposals → method.
+   Filled by `node context-load.mjs render <dir>`; all content comes from the embedded JSON. */
+:root {
+  --bg: #f2f4f7;
+  --surface: #fcfcfb;
+  --ink: #14171c;
+  --muted: #545a64;
+  --faint: #7d828a;
+  --line: #dde1e6;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --s4: #eda100;
+  --rest: #b4b9c1;
+  --accent: #2a78d6;
+  --accent-soft: #e3edfa;
+  --crit: #d03b3b;
+  --warn: #c98500;
+  --tint-crit: #fbe7e6;
+  --tint-warn: #fbf1dc;
+  --tint-low: #eceef1;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101216; --surface: #1a1a19; --ink: #f0efec; --muted: #c3c2b7; --faint: #8f949b; --line: #2c3036; --grid: #2c2c2a; --axis: #383835;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --rest: #4a4f57;
+    --accent: #7eaaf0; --accent-soft: #1b2a40; --crit: #ff8a7a; --warn: #f0b54a;
+    --tint-crit: #3a1d1a; --tint-warn: #2e2512; --tint-low: #23262b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101216; --surface: #1a1a19; --ink: #f0efec; --muted: #c3c2b7; --faint: #8f949b; --line: #2c3036; --grid: #2c2c2a; --axis: #383835;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --rest: #4a4f57;
+  --accent: #7eaaf0; --accent-soft: #1b2a40; --crit: #ff8a7a; --warn: #f0b54a;
+  --tint-crit: #3a1d1a; --tint-warn: #2e2512; --tint-low: #23262b;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+.page { max-width: 880px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px; display: grid; gap: 48px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 5.5vw, 2.6rem); line-height: 1.1; letter-spacing: -0.01em; }
+h2 { font-size: 1.3rem; line-height: 1.2; }
+h3 { font-size: 1.02rem; line-height: 1.3; }
+p { margin: 0; }
+section { display: grid; gap: 16px; min-width: 0; }
+.mono { font-family: var(--f-mono); font-size: .82em; }
+.note { color: var(--muted); font-size: .9rem; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.hero { display: grid; gap: 14px; }
+.eyebrow { font-size: .76rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 700; }
+.lead { font-size: 1.15rem; max-width: 38em; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--muted); font-size: .9rem; }
+.facts b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 2px; }
+.tile-value { font-family: var(--f-display); font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tile-label { color: var(--muted); font-size: .85rem; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .85rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.picker { display: flex; flex-wrap: wrap; gap: 6px; }
+.picker button { font: inherit; font-size: .78rem; font-family: var(--f-mono); border: 1px solid var(--line); background: var(--bg); color: var(--muted); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.picker button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.curve { width: 100%; min-height: 260px; position: relative; }
+.curve svg { display: block; width: 100%; height: 260px; }
+.curve text { font-family: var(--f-body); font-size: 11px; fill: var(--muted); }
+.curve .lbl { font-weight: 700; fill: var(--ink); }
+
+.stack-track { display: flex; gap: 2px; min-width: 0; }
+.stack-seg { height: 22px; min-width: 2px; }
+.stack-seg:first-child { border-radius: 4px 0 0 4px; }
+.stack-seg:last-child { border-radius: 0 4px 4px 0; }
+
+.hbars { display: grid; gap: 10px; }
+.hbar-row { display: grid; grid-template-columns: minmax(7rem, 15rem) 1fr minmax(6rem, auto); gap: 12px; align-items: center; }
+.hbar-label { font-family: var(--f-mono); font-size: .78rem; overflow-wrap: anywhere; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; min-width: 0; }
+.hbar-track { min-width: 0; border-left: 1px solid var(--grid); }
+.hbar-fill { height: 14px; border-radius: 0 4px 4px 0; }
+.hbar-val { font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+
+.chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--f-body); font-size: .74rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.chip.high { background: var(--tint-crit); color: var(--crit); }
+.chip.medium { background: var(--tint-warn); color: var(--warn); }
+.chip.low { background: var(--tint-low); color: var(--muted); }
+.chip.plain { background: var(--accent-soft); color: var(--accent); }
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .86rem; }
+th { text-align: left; font-weight: 700; color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); }
+td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.cmd { font-family: var(--f-mono); font-size: .76rem; overflow-wrap: anywhere; min-width: 16rem; white-space: pre-line; }
+
+.cards { display: grid; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; gap: 8px; min-width: 0; }
+.card-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: baseline; }
+.card-id { font-family: var(--f-mono); font-size: .85rem; color: var(--accent); font-weight: 500; }
+.card dl { display: grid; grid-template-columns: 7.5rem 1fr; gap: 4px 12px; margin: 0; font-size: .92rem; }
+.card dt { color: var(--muted); }
+.card dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.reply { border: 1px dashed var(--accent); border-radius: 12px; padding: 14px 18px; background: var(--accent-soft); display: grid; gap: 6px; }
+.reply code { font-family: var(--f-mono); font-size: .85rem; }
+
+.tip { position: fixed; z-index: 20; max-width: 340px; background: var(--ink); color: var(--bg); font-size: .8rem; padding: 6px 9px; border-radius: 6px; pointer-events: none; white-space: pre-line; }
+
+@media (max-width: 640px) {
+  .hbar-row { grid-template-columns: 1fr auto; }
+  .hbar-label { grid-column: 1 / -1; }
+  .card dl { grid-template-columns: 1fr; }
+  .card dt { margin-top: 4px; }
+}
+</style>
+
+<main class="page" id="app"></main>
+
+<script id="report-data" type="application/json">__REPORT_DATA__</script>
+<script>
+(function () {
+  const { data, findings } = JSON.parse(document.getElementById('report-data').textContent);
+  const F = findings || {};
+  const de = String(F.lang || 'en').toLowerCase().startsWith('de');
+  const L = de ? {
+    eyebrow: 'Kontextlast', sessions: 'Sitzungen', made: 'erstellt', ratio: 'Tokens je Zeichen',
+    tilePeak: 'Höchster Kontext', tileStart: 'Start jeder Sitzung (Median)', tileCompact: 'Kompaktierungen', tileSkills: 'Skill-Liste je Sitzung',
+    curveH: 'Kontext über die Sitzung', curveNote: 'Exakte Kontextgröße je Modellaufruf. Wähle eine Sitzung.', call: 'Aufruf', start: 'Start', peak: 'Spitze', limit: 'Limit', compact: 'kompaktiert',
+    sessH: 'Alle Sitzungen', first: 'Start', final: 'Ende', processed: 'verarbeitet gesamt', calls: 'Aufrufe', compactions: 'Kompakt.',
+    baseH: 'Was schon vor der ersten Frage drin ist', baseNote: 'Zusammensetzung des Startkontexts (Median aller Sitzungen). Werte mit ≈ sind geschätzt.',
+    skills: 'Skill-Liste', agents: 'Agenten-Liste', instructions: 'CLAUDE.md und Importe', otherAtt: 'weitere Hinweise', rest: 'Systemprompt, Tools, erste Nachricht',
+    fillH: 'Was den Kontext füllt', fillNote: 'Summe über alle Sitzungen, ≈ Tokens. Die Modellausgabe ist exakt.',
+    toolsH: 'Tool-Ergebnisse nach Herkunft', largest: 'größtes',
+    skillH: 'Längste Skill-Beschreibungen', skillNote: 'Jede Beschreibung steht in jeder Sitzung im Kontext, ob der Skill genutzt wird oder nicht.',
+    origin: { project: 'Projekt', user: 'Benutzer', plugin: 'Plugin', 'built-in': 'eingebaut' },
+    stepH: 'Größte Sprünge', stepNote: 'Zuwachs zwischen zwei Aufrufen (exakt) und was ihn verursacht hat (≈).', growth: 'Zuwachs', after: 'danach', cause: 'Ursache',
+    readH: 'Mehrfach gelesene Dateien', bigH: 'Große Einzel-Ergebnisse', times: 'mal', file: 'Datei', what: 'Aufruf',
+    findH: 'Befunde', evidence: 'Beleg', impact: 'Wirkung', cost: 'Kosten',
+    propH: 'Vorschläge', change: 'Änderung', where: 'Ort', fixes: 'Behebt', effort: 'Aufwand', gain: 'Gewinn', risk: 'Risiko',
+    sev: { high: '▲ hoch', medium: '● mittel', low: '○ niedrig' },
+    scope: { project: 'Projekt', user: 'Benutzer-Einstellungen', machine: 'Rechner', workflow: 'Skills / Workflow' },
+    replyH: 'So geht es weiter', replyText: 'Bis jetzt ist nichts geändert. Antworte im Chat, welche Vorschläge umgesetzt werden sollen, z. B.',
+    replyEx: 'V1, V2 – V4 nur die kleine Variante', susH: 'Vermutungen (nicht belegt)', notH: 'Nicht geprüft', methodH: 'Wie gemessen',
+    method: 'Die Kontextgröße stammt aus den Usage-Angaben der API (Eingabe + Cache gelesen + Cache geschrieben) und ist exakt. Was ihn füllt, wird über die Zeichen geschätzt, die zwischen zwei Aufrufen dazukommen, umgerechnet mit dem in diesen Sitzungen beobachteten Verhältnis. Die aktuelle Sitzung ist ausgenommen.',
+  } : {
+    eyebrow: 'Context load', sessions: 'sessions', made: 'generated', ratio: 'tokens per char',
+    tilePeak: 'Highest context', tileStart: 'Start of each session (median)', tileCompact: 'Compactions', tileSkills: 'Skill listing per session',
+    curveH: 'Context across the session', curveNote: 'Exact context size per model call. Pick a session.', call: 'call', start: 'start', peak: 'peak', limit: 'limit', compact: 'compacted',
+    sessH: 'All sessions', first: 'Start', final: 'End', processed: 'processed total', calls: 'Calls', compactions: 'Compact.',
+    baseH: 'What is in before the first question', baseNote: 'Make-up of the starting context (median of all sessions). Values with ≈ are estimates.',
+    skills: 'Skill listing', agents: 'Agent listing', instructions: 'CLAUDE.md and imports', otherAtt: 'other reminders', rest: 'System prompt, tools, first message',
+    fillH: 'What fills the context', fillNote: 'Sum over all sessions, ≈ tokens. Model output is exact.',
+    toolsH: 'Tool results by source', largest: 'largest',
+    skillH: 'Longest skill descriptions', skillNote: 'Every description sits in every session\'s context, used or not.',
+    origin: { project: 'project', user: 'user', plugin: 'plugin', 'built-in': 'built-in' },
+    stepH: 'Biggest jumps', stepNote: 'Growth between two calls (exact) and what caused it (≈).', growth: 'Growth', after: 'after', cause: 'Cause',
+    readH: 'Files read more than once', bigH: 'Big single results', times: '×', file: 'File', what: 'Call',
+    findH: 'Findings', evidence: 'Evidence', impact: 'Impact', cost: 'Cost',
+    propH: 'Proposals', change: 'Change', where: 'Where', fixes: 'Fixes', effort: 'Effort', gain: 'Gain', risk: 'Risk',
+    sev: { high: '▲ high', medium: '● medium', low: '○ low' },
+    scope: { project: 'Project', user: 'User settings', machine: 'Machine', workflow: 'Skills / workflow' },
+    replyH: 'What happens next', replyText: 'Nothing has been changed yet. Reply in the chat with the proposals to apply, e.g.',
+    replyEx: 'V1, V2 – V4 small variant only', susH: 'Suspicions (not evidenced)', notH: 'Not checked', methodH: 'How it was measured',
+    method: 'Context size comes from the API usage (input + cache read + cache write) and is exact. What fills it is estimated from the characters added between two calls, converted with the ratio observed in these sessions. The current session is excluded.',
+  };
+
+  const app = document.getElementById('app');
+  const el = (tag, attrs, ...kids) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null) continue;
+      if (k === 'class') e.className = v; else if (k === 'style') e.setAttribute('style', v); else e.setAttribute(k, v);
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) e.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    return e;
+  };
+  const NS = 'http://www.w3.org/2000/svg';
+  const svgEl = (tag, attrs, text) => {
+    const e = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
+    if (text != null) e.textContent = text;
+    return e;
+  };
+  const k = n => {
+    n = Math.round(n || 0);
+    if (n < 1000) return String(n);
+    const v = n / 1000;
+    const s = v >= 100 ? String(Math.round(v)) : v.toFixed(1);
+    return (de ? s.replace('.', ',') : s) + 'k';
+  };
+  const day = t => t ? new Date(t).toLocaleDateString(de ? 'de-DE' : 'en-GB', { day: '2-digit', month: 'short' }) : '';
+  const tip = el('div', { class: 'tip', role: 'tooltip' });
+  tip.hidden = true;
+  document.body.append(tip);
+  const withTip = (node, text) => { node.dataset.tip = text; node.tabIndex = 0; node.setAttribute('aria-label', text); return node; };
+  const placeTip = (text, x, y) => {
+    tip.textContent = text; tip.hidden = false;
+    tip.style.left = Math.max(8, Math.min(x, innerWidth - tip.offsetWidth - 8)) + 'px';
+    tip.style.top = Math.min(y, innerHeight - tip.offsetHeight - 8) + 'px';
+  };
+  document.addEventListener('pointermove', e => {
+    if (e.target.closest && e.target.closest('.curve')) return;
+    const t = e.target.closest && e.target.closest('[data-tip]');
+    if (!t) { tip.hidden = true; return; }
+    placeTip(t.dataset.tip, e.clientX + 14, e.clientY + 16);
+  });
+  document.addEventListener('focusin', e => {
+    const t = e.target.closest && e.target.closest('[data-tip]');
+    if (!t) { tip.hidden = true; return; }
+    const r = t.getBoundingClientRect();
+    placeTip(t.dataset.tip, r.left, r.bottom + 6);
+  });
+  document.addEventListener('focusout', () => { tip.hidden = true; });
+
+  const hbars = (rows, o) => {
+    const max = Math.max(1, ...rows.map(o.value));
+    return el('div', { class: 'hbars' }, rows.map(r => el('div', { class: 'hbar-row' },
+      el('div', { class: 'hbar-label' }, o.label(r), o.badge ? o.badge(r) : null),
+      el('div', { class: 'hbar-track' }, withTip(el('div', { class: 'hbar-fill', style: 'width:' + Math.max(0.6, o.value(r) / max * 100) + '%;background:var(--s1)' }), o.tip(r))),
+      el('div', { class: 'hbar-val' }, o.text(r)))));
+  };
+  const table = (head, rows) => el('div', { class: 'table-wrap' }, el('table', null,
+    el('thead', null, el('tr', null, head.map(h => el('th', null, h)))),
+    el('tbody', null, rows)));
+
+  // ── head ──
+  const sessions = data.sessions || [];
+  const st = data.static || {};
+  const skillTok = (st.items || []).find(i => i.source === 'skill_listing');
+  const compactions = sessions.reduce((a, s) => a + (s.compactions || []).length, 0);
+  app.append(el('header', { class: 'hero' },
+    el('div', { class: 'eyebrow' }, L.eyebrow + ' · ' + data.project),
+    el('h1', null, F.headline || (L.curveH + ' — ' + data.project)),
+    F.summary ? el('p', { class: 'lead' }, F.summary) : null,
+    el('div', { class: 'facts' },
+      el('span', null, el('b', null, String(sessions.length)), ' ' + L.sessions),
+      el('span', null, L.ratio + ' ', el('b', null, String(data.tokensPerChar))),
+      el('span', null, L.made + ' ', el('b', null, day(Date.parse(data.generatedAt))))),
+    el('div', { class: 'tiles' },
+      [[k(Math.max(0, ...sessions.map(s => s.peak))), L.tilePeak], [k((data.baseline || {}).medianFirstCall), L.tileStart], [String(compactions), L.tileCompact], [skillTok ? '≈ ' + k(skillTok.tokens) : '–', L.tileSkills]]
+        .map(([v, l]) => el('div', { class: 'tile' }, el('span', { class: 'tile-value' }, v), el('span', { class: 'tile-label' }, l))))));
+
+  // ── curve ──
+  if (sessions.length) {
+    const picker = el('div', { class: 'picker', role: 'group' });
+    const box = el('div', { class: 'curve' });
+    let current = sessions.reduce((a, s, i) => (s.peak > sessions[a].peak ? i : a), 0);
+    const draw = () => {
+      const s = sessions[current];
+      const pts = s.timeline || [];
+      const W = Math.max(300, box.clientWidth), H = 260, pl = 44, pr = 16, pt = 18, pb = 28;
+      const top = Math.max(s.peak, F.contextLimit || 0) * 1.08;
+      const stepRaw = top / 4, mag = Math.pow(10, Math.floor(Math.log10(stepRaw)));
+      const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(v => v >= stepRaw);
+      const yMax = Math.ceil(top / step) * step;
+      const lastI = Math.max(1, pts.length ? pts[pts.length - 1].i : 1);
+      const x = i => pl + (i / lastI) * (W - pl - pr);
+      const y = v => pt + (1 - v / yMax) * (H - pt - pb);
+      const svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': L.curveH + ' ' + s.id.slice(0, 8) + ': ' + L.start + ' ' + k(s.first) + ', ' + L.peak + ' ' + k(s.peak) });
+      for (let v = 0; v <= yMax; v += step) {
+        svg.append(svgEl('line', { x1: pl, x2: W - pr, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--grid)', 'stroke-width': 1 }));
+        svg.append(svgEl('text', { x: pl - 6, y: y(v) + 4, 'text-anchor': 'end' }, k(v)));
+      }
+      svg.append(svgEl('text', { x: pl, y: H - 8 }, L.call + ' 1'));
+      svg.append(svgEl('text', { x: W - pr, y: H - 8, 'text-anchor': 'end' }, L.call + ' ' + (lastI + 1)));
+      if (F.contextLimit) {
+        svg.append(svgEl('line', { x1: pl, x2: W - pr, y1: y(F.contextLimit), y2: y(F.contextLimit), stroke: 'var(--crit)', 'stroke-dasharray': '5 4', 'stroke-width': 1.5 }));
+        svg.append(svgEl('text', { x: W - pr, y: y(F.contextLimit) - 6, 'text-anchor': 'end', class: 'lbl' }, L.limit + ' ' + k(F.contextLimit)));
+      }
+      svg.append(svgEl('line', { x1: pl, x2: W - pr, y1: y(s.first), y2: y(s.first), stroke: 'var(--faint)', 'stroke-dasharray': '2 4', 'stroke-width': 1 }));
+      svg.append(svgEl('text', { x: pl + 6, y: y(s.first) - 6 }, L.start + ' ' + k(s.first)));
+      for (const c of s.compactions || []) {
+        svg.append(svgEl('line', { x1: x(c.at), x2: x(c.at), y1: pt, y2: H - pb, stroke: 'var(--s2)', 'stroke-dasharray': '4 3', 'stroke-width': 1.5 }));
+        svg.append(svgEl('text', { x: x(c.at) + 4, y: pt + 10 }, L.compact));
+      }
+      if (pts.length) {
+        const d = pts.map((p, i) => (i ? 'L' : 'M') + x(p.i).toFixed(1) + ' ' + y(p.ctx).toFixed(1)).join(' ');
+        svg.append(svgEl('path', { d: d + ' L' + x(pts[pts.length - 1].i).toFixed(1) + ' ' + y(0) + ' L' + x(pts[0].i).toFixed(1) + ' ' + y(0) + ' Z', fill: 'var(--s1)', 'fill-opacity': 0.12, stroke: 'none' }));
+        svg.append(svgEl('path', { d, fill: 'none', stroke: 'var(--s1)', 'stroke-width': 2, 'stroke-linejoin': 'round' }));
+        const pk = pts.reduce((a, p) => (p.ctx > a.ctx ? p : a), pts[0]);
+        svg.append(svgEl('circle', { cx: x(pk.i), cy: y(pk.ctx), r: 5, fill: 'var(--s1)', stroke: 'var(--surface)', 'stroke-width': 2 }));
+        svg.append(svgEl('text', { x: Math.min(x(pk.i), W - pr - 70), y: y(pk.ctx) - 10, class: 'lbl' }, L.peak + ' ' + k(pk.ctx)));
+      }
+      const cross = svgEl('line', { y1: pt, y2: H - pb, stroke: 'var(--faint)', 'stroke-width': 1, visibility: 'hidden' });
+      const dot = svgEl('circle', { r: 4, fill: 'var(--s1)', stroke: 'var(--surface)', 'stroke-width': 2, visibility: 'hidden' });
+      const hit = svgEl('rect', { x: pl, y: pt, width: W - pl - pr, height: H - pt - pb, fill: 'transparent' });
+      svg.append(cross, dot, hit);
+      hit.addEventListener('pointermove', e => {
+        const r = svg.getBoundingClientRect();
+        const i = ((e.clientX - r.left) * (W / r.width) - pl) / (W - pl - pr) * lastI;
+        const p = pts.reduce((a, q) => (Math.abs(q.i - i) < Math.abs(a.i - i) ? q : a), pts[0]);
+        if (!p) return;
+        cross.setAttribute('x1', x(p.i)); cross.setAttribute('x2', x(p.i)); cross.setAttribute('visibility', 'visible');
+        dot.setAttribute('cx', x(p.i)); dot.setAttribute('cy', y(p.ctx)); dot.setAttribute('visibility', 'visible');
+        placeTip(L.call + ' ' + (p.i + 1) + ': ' + k(p.ctx) + ' Tokens', e.clientX + 14, e.clientY + 16);
+      });
+      hit.addEventListener('pointerleave', () => { cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); tip.hidden = true; });
+      box.replaceChildren(svg);
+    };
+    sessions.forEach((s, i) => {
+      const b = el('button', { type: 'button', 'aria-pressed': String(i === current) }, day(s.start) + ' · ' + s.id.slice(0, 8) + ' · ' + k(s.peak));
+      b.addEventListener('click', () => {
+        current = i;
+        picker.querySelectorAll('button').forEach((x, j) => x.setAttribute('aria-pressed', String(j === i)));
+        draw();
+      });
+      picker.append(b);
+    });
+    app.append(el('section', null, el('h2', null, L.curveH), el('p', { class: 'note' }, L.curveNote), el('div', { class: 'panel' }, picker, box)));
+    requestAnimationFrame(draw);
+    let rt;
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
+
+    app.append(el('section', null, el('h2', null, L.sessH), el('div', { class: 'panel' }, table(
+      ['', L.calls, L.first, L.peak, L.final, L.processed, L.compactions],
+      sessions.map(s => el('tr', null, el('td', { class: 'mono' }, day(s.start) + ' · ' + s.id.slice(0, 8)), el('td', { class: 'num' }, String(s.calls)), el('td', { class: 'num' }, k(s.first)), el('td', { class: 'num' }, k(s.peak)), el('td', { class: 'num' }, k(s.final)), el('td', { class: 'num' }, k(s.processed)), el('td', { class: 'num' }, String((s.compactions || []).length))))))));
+  }
+
+  // ── start load ──
+  const items = st.items || [];
+  const tokOf = src => (items.find(i => i.source === src) || {}).tokens || 0;
+  const known = [['skill_listing', L.skills, 'var(--s1)'], ['agent_listing_delta', L.agents, 'var(--s2)'], ['instructions', L.instructions, 'var(--s3)']];
+  const otherTok = items.filter(i => !known.some(([s]) => s === i.source)).reduce((a, i) => a + i.tokens, 0);
+  const base = (data.baseline || {}).medianFirstCall || 0;
+  const segs = [...known.map(([s, l, c]) => [l, tokOf(s), c, true]), [L.otherAtt, otherTok, 'var(--s4)', true]];
+  const restTok = Math.max(0, base - segs.reduce((a, s) => a + s[1], 0));
+  segs.push([L.rest, restTok, 'var(--rest)', false]);
+  if (base) {
+    app.append(el('section', null, el('h2', null, L.baseH), el('p', { class: 'note' }, L.baseNote), el('div', { class: 'panel' },
+      el('div', { class: 'stack-track' }, segs.filter(s => s[1] > 0).map(([l, v, c, est]) => withTip(el('div', { class: 'stack-seg', style: 'flex:' + v + ' 1 0;background:' + c }), l + ': ' + (est ? '≈ ' : '') + k(v) + ' (' + Math.round(v / base * 100) + '%)'))),
+      el('div', { class: 'legend' }, segs.map(([l, v, c, est]) => el('span', null, el('i', { style: 'background:' + c }), l + ' ', el('b', null, (est ? '≈ ' : '') + k(v))))),
+      (st.files || []).length ? el('p', { class: 'note' }, (st.files || []).map(f => f.path.split(/[\\/]/).pop() + ' ≈ ' + k(f.tokens)).join(' · ')) : null)));
+  }
+
+  // ── what fills it ──
+  const cats = (data.categories || []).slice(0, 12);
+  if (cats.length) {
+    app.append(el('section', null, el('h2', null, L.fillH), el('p', { class: 'note' }, L.fillNote), el('div', { class: 'panel' }, hbars(cats, {
+      value: c => c.tokens, label: c => c.cat, text: c => k(c.tokens), tip: c => c.cat + ': ' + k(c.tokens) + ' Tokens',
+    }))));
+  }
+  const groups = (data.groups || []).slice(0, 10);
+  if (groups.length) {
+    app.append(el('section', null, el('h2', null, L.toolsH), el('div', { class: 'panel' }, hbars(groups, {
+      value: g => g.tokens, label: g => g.group, text: g => '≈ ' + k(g.tokens) + ' · ' + g.n + '×',
+      tip: g => g.group + '\n≈ ' + k(g.tokens) + ' · ' + g.n + '× · ' + L.largest + ' ≈ ' + k(g.maxTokens),
+    }))));
+  }
+  const skills = (st.skills || []).slice(0, 10);
+  if (skills.length) {
+    app.append(el('section', null, el('h2', null, L.skillH), el('p', { class: 'note' }, L.skillNote + ' (' + (st.skillCount || skills.length) + ')'), el('div', { class: 'panel' }, hbars(skills, {
+      value: s => s.tokens, label: s => s.name, badge: s => el('span', { class: 'chip ' + (s.origin === 'project' || s.origin === 'user' ? 'plain' : 'low') }, L.origin[s.origin] || s.origin),
+      text: s => '≈ ' + k(s.tokens), tip: s => s.name + ' (' + (L.origin[s.origin] || s.origin) + '): ≈ ' + k(s.tokens) + ' Tokens',
+    }))));
+  }
+
+  // ── growth steps ──
+  const steps = (data.steps || []).slice(0, 10);
+  if (steps.length) {
+    app.append(el('section', null, el('h2', null, L.stepH), el('p', { class: 'note' }, L.stepNote), el('div', { class: 'panel' }, table(
+      [L.growth, L.after, L.cause, ''],
+      steps.map(s => el('tr', null, el('td', { class: 'num' }, '+' + k(s.delta)), el('td', { class: 'num' }, k(s.ctxAfter)),
+        el('td', { class: 'cmd' }, s.top.map(t => t.label + ' ≈ ' + k(t.tokens) + (t.detail ? ' · ' + t.detail : '')).join('\n')),
+        el('td', { class: 'mono' }, s.session + '#' + s.at)))))));
+  }
+
+  // ── repeated reads, big results ──
+  const reads = (data.repeatedReads || []).slice(0, 10);
+  if (reads.length) {
+    app.append(el('section', null, el('h2', null, L.readH), el('div', { class: 'panel' }, table(
+      ['≈', L.times, L.file, ''],
+      reads.map(r => el('tr', null, el('td', { class: 'num' }, k(r.tokens)), el('td', { class: 'num' }, r.n + '×'), el('td', { class: 'cmd' }, r.file), el('td', { class: 'mono' }, r.session)))))));
+  }
+  const big = (data.bigResults || []).slice(0, 10);
+  if (big.length) {
+    app.append(el('section', null, el('h2', null, L.bigH), el('div', { class: 'panel' }, table(
+      ['≈', L.what, ''],
+      big.map(b => el('tr', null, el('td', { class: 'num' }, k(b.tokens)), el('td', { class: 'cmd' }, b.what + ' · ' + b.detail), el('td', { class: 'mono' }, b.session)))))));
+  }
+
+  // ── findings ──
+  if ((F.findings || []).length) {
+    app.append(el('section', null, el('h2', null, L.findH), el('div', { class: 'cards' }, F.findings.map(f => el('article', { class: 'card' },
+      el('div', { class: 'card-head' }, el('span', { class: 'card-id' }, f.id), el('h3', null, f.title), el('span', { class: 'chip ' + (L.sev[f.severity] ? f.severity : 'low') }, L.sev[f.severity] || f.severity || '')),
+      el('dl', null,
+        f.evidence ? [el('dt', null, L.evidence), el('dd', null, f.evidence)] : null,
+        f.impact ? [el('dt', null, L.impact), el('dd', null, f.impact)] : null,
+        f.cost ? [el('dt', null, L.cost), el('dd', null, f.cost)] : null))))));
+  }
+
+  // ── proposals ──
+  if ((F.proposals || []).length) {
+    app.append(el('section', null, el('h2', null, L.propH), el('div', { class: 'cards' }, F.proposals.map(p => el('article', { class: 'card' },
+      el('div', { class: 'card-head' }, el('span', { class: 'card-id' }, p.id), el('h3', null, p.title),
+        p.scope ? el('span', { class: 'chip plain' }, L.scope[p.scope] || p.scope) : null,
+        p.effort ? el('span', { class: 'chip low' }, L.effort + ' ' + p.effort) : null),
+      el('dl', null,
+        p.change ? [el('dt', null, L.change), el('dd', null, p.change)] : null,
+        p.where ? [el('dt', null, L.where), el('dd', { class: 'mono' }, p.where)] : null,
+        (p.fixes || []).length ? [el('dt', null, L.fixes), el('dd', null, p.fixes.join(', '))] : null,
+        p.gain ? [el('dt', null, L.gain), el('dd', null, p.gain)] : null,
+        p.risk ? [el('dt', null, L.risk), el('dd', null, p.risk)] : null)))),
+      el('div', { class: 'reply' }, el('h3', null, L.replyH), el('p', null, L.replyText + ' ', el('code', null, F.replyExample || L.replyEx)))));
+  }
+
+  app.append(el('section', null,
+    (F.suspicions || []).length ? [el('h2', null, L.susH), el('ul', { class: 'note' }, F.suspicions.map(n => el('li', null, n)))] : null,
+    (F.notChecked || []).length ? [el('h2', null, L.notH), el('ul', { class: 'note' }, F.notChecked.map(n => el('li', null, n)))] : null,
+    el('h2', null, L.methodH), el('p', { class: 'note' }, L.method)));
+})();
+</script>
