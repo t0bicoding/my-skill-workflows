@@ -22,17 +22,18 @@ Every interview has its own `interview/` folder. Everything it writes goes there
 | feature planning | `docs/features/<feature>/planning/interview/` |
 | without a feature (directly, `one-shot`, `project-setup`, `project-roadmap`) | `docs/interview/<topic>/`, with `<topic>` a short kebab-case name (e.g. `backup-strategy`; in a one-shot its topic name; from `project-setup` or `project-roadmap` the skill's name), chosen at the start |
 
-- **`progress.md` exists:** an interrupted interview. Continue from it (topics, decisions, open points, next question) instead of starting over.
+- **`progress.md` exists:** an interview the user paused. Continue from it (topics, decisions, open points, next question) instead of starting over.
 - **Topic files exist from an earlier interview:** read them. New decisions update these files at the end; don't write a second set.
 
 ## Rounds
 
+- **Intro:** before the first question, say in one sentence that the user can pause after any question and continue later. Don't repeat this hint later.
+- **No files while the interview runs.** Keep topics, decisions and open points in the conversation; the interview files are written only at the end (see Finish). Exceptions: visual aids (see Visual aid) and a pause (see Pause).
 - **One question per round**, so the user can focus on it. Later questions build on earlier answers.
 - **Order of topics:** take the topics that still need a decision (leave out what the passed files already decide), topics others depend on first. Adapt when answers open new topics.
 - Wait for the answer before the next round.
 - The user can ask back at any time: when they don't understand a question, the options don't fit or your understanding is wrong. Clarify, then continue.
 - The important decisions are the user's. Recommend, never decide them.
-- **After every round,** update `progress.md` (see Progress).
 
 ## Clear decisions
 
@@ -45,7 +46,7 @@ Ask only what really needs the user. Decide the rest yourself and show it, so th
 | hard to reverse | easy to change later |
 | depends on the user's taste or priorities | common practice nobody would question |
 
-When in doubt, ask. Collect your own decisions in `progress.md` and show them in the summary at the end (see Finish), so the user can still object:
+When in doubt, ask. Keep track of your own decisions and show them in the summary at the end (see Finish), so the user can still object:
 
 ✔️ **Decided by me** (say if you want to change one):
 - <Decision> — <why it's clear>
@@ -94,7 +95,7 @@ Some options can only be compared when you see them, and that doesn't fit into t
   - flows and states with many steps or branches
   - longer code per option
   - comparisons over many rows
-- **Not when:** the flow line or a short snippet in the chat is enough. Most questions need no file.
+- **Not when:** the flow line or a short snippet in the chat is enough. Most questions need no file. Options that differ in how they *look* (colors, fonts, density) go into a [visual preview](#visual-preview) instead.
 - **Chat:** the question format stays the same. Add only one line between 📍 and ❓: `📎 [Visual aid: <what it shows>](<path>)`, with the path relative to the project root so it can be clicked.
 - **File:** `<interview folder>/q<n>-<slug>.md`.
 - **Content:**
@@ -104,21 +105,39 @@ Some options can only be compared when you see them, and that doesn't fit into t
   - Mark what is new or changed (e.g. `+` / `~` in a tree) and explain the markers in one line at the top.
   - Optionally a short comparison at the end, e.g. what you would have to touch later for a concrete change.
   - Patterns for trees, wireframes, flows and data: [VISUALS.md](VISUALS.md).
-- **Temporary:** once the question is answered, the file has done its job. All `q<n>-*.md` files are deleted at the end (see Finish).
+- **Temporary:** once the question is answered, the file has done its job. All `q<n>-*` files are deleted at the end (see Finish).
 
-## Progress
+## Visual preview
 
-`<interview folder>/progress.md`, from [templates/progress.md](templates/progress.md). Created with the first round, updated after every round: topics with their state, decisions as one-liners, your own decisions, open points, next question.
+Colors, fonts, sizes, density or the look of a screen can't be judged in Markdown. Show them as an HTML page with the Artifact tool: a small prototype without a branch and without project code.
 
-It lets the interview continue in a new chat. Short, no shadow of the topic files. Deleted at the end (see Finish).
+- **When:** the options differ in how they look, and a self-contained page with example data can show them, e.g. color themes, typefaces, density, icon styles, the look of a component or of the app frame. Also whenever the user asks to see variants.
+- **Not when:** the question depends on real app behavior, real data or the project's code. That is the `prototype` skill (in a slice offered as an answer option, see `slice`).
+- **Offer it yourself:** when a question is about looks, build the preview right away instead of describing the options in words. The user may ask for more or other variants (e.g. "add one with a cosmic touch"); build them and ask the same question again.
+- **Content:**
+  - One page per question. Every option shows the same mock of the real screen (e.g. the main window with title bar, list, a selected entry, a warning, a focused input, buttons) with the same real example data from the project, so only the difference stands out.
+  - Label each option with the letter and ⭐ of the chat question.
+  - When the project has several color modes, show each option in all of them side by side (e.g. light and dark).
+  - Later previews build on what is already decided (e.g. the chosen theme in the font preview).
+  - Follow the design guidance of the Artifact tool.
+- **Chat:** the question format stays the same. Add one line between 📍 and ❓: `📎 [Preview: <what it shows>](<artifact link>)`.
+- **Files:** the HTML source goes into the session's scratchpad, not into the project. The artifact is private to the user.
+- **In the topic files:** name what was compared ("compared in an HTML preview: A, B, C") and write down the decided values (e.g. a color table, see [VISUALS.md](VISUALS.md#colors)). The preview link may be added; don't copy the HTML into the project.
+- **No Artifact tool available:** write the page to `<interview folder>/q<n>-<slug>.html` and give its path to open in a browser. It is deleted at the end like the other visual aids.
+
+## Pause
+
+Only when the user says they want to stop and continue later: write `<interview folder>/progress.md` from [templates/progress.md](templates/progress.md) with topics and their state, decisions as one-liners, your own decisions, open points and the next question. Short, no shadow of the topic files. Keep the visual aids of open questions. Then tell the user how to continue (the calling skill's command, or `/interview` with the folder).
+
+On a restart, continue from `progress.md` and keep going without files again. It is deleted at the end (see Finish).
 
 ## Finish
 
 When there is a shared understanding:
 
 1. **Summary:** summarize the decisions in the chat, including the ones you made yourself, and wait for the user's confirmation.
-2. **Clean up:** delete all visual aids `q<n>-*.md`. The questions are settled.
-3. **Topic files:** write the interview files (see below) from the confirmed decisions. Then delete `progress.md`.
+2. **Clean up:** delete all visual aids `q<n>-*` (`.md`, and `.html` if there was no Artifact tool). The questions are settled.
+3. **Topic files:** write the interview files (see below) from the confirmed decisions. Then delete `progress.md` if a pause left one.
 4. **Review:** list the files with links and give the user time to read them. They can give changes in the chat or edit the files directly (re-read them afterwards). Adjust until the user is happy.
 5. **Continue:**
    - Called by a skill: continue with that skill.

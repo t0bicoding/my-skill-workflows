@@ -48,5 +48,5 @@ Prototypes live on their own branch in the project folder, never in the feature 
 
   Otherwise name the files and ask the user to save them there. Install new tools or packages for this only after the user's OK.
 - Switch back to the original branch. If the prototype added packages, reinstall dependencies.
-- In a slice or in `fast-lane`, the result is the answer to an interview question; `interview` notes it in `progress.md` and writes it into the matching topic file with the screenshots at the end. Used directly: ask where to record it.
+- In a slice or in `fast-lane`, the result is the answer to an interview question; `interview` keeps it with the other decisions and writes it into the matching topic file with the screenshots at the end. Used directly: ask where to record it.
 - The decision must hold without the prototype. The branch stays until `close-slice` (slice prototypes) or `close-feature` (fast-lane prototypes) offers to delete it; to look at it again, switch to it.

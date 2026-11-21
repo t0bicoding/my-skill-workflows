@@ -27,7 +27,7 @@ Then set the slice to `in progress` in `roadmap.md`.
 
 1. Collect the context, and only this: the slice's entry in `roadmap.md`; from `specifications.md` only the `F` and `AC` the entry lists under "Covers"; "Left open" in `planning/interview/README.md` (points deferred to a slice); from the previous slice's `handoff.md` only "Notes for the next slice" and "Postponed"; an existing `interview/` of this slice (on a restart: `interview/progress.md`); `ARCHITECTURE.md`; from `GLOSSARY.md` the terms of the area; ADRs in `docs/adrs/` that touch the area (pick them by title).
 2. Use the `interview` skill with the context. Topics come only from what this slice needs, e.g. structure, data, logic, UI, testing, glossary, ADRs. Its folder is `implementation/slice-<nn>/interview/`.
-3. If a decision is hard to judge on paper (often UI or a flow), add "build a prototype" as an answer option to that question, with ⭐ if you recommend it. If the user picks it, use the `prototype` skill right after the round. Questions that depend on this decision wait until the prototype has settled it; the others go on. The result counts as the answer to the question (note it in `progress.md`, screenshots in `interview/assets/`). Example:
+3. If a decision is hard to judge on paper (often UI or a flow), add "build a prototype" as an answer option to that question, with ⭐ if you recommend it. If the user picks it, use the `prototype` skill right after the round. Questions that depend on this decision wait until the prototype has settled it; the others go on. The result counts as the answer to the question (screenshots in `interview/assets/`). Example:
    ```
    🔶 **Q3 · Login form layout**
    📍 `start the app` → `login screen opens` → `empty form`

@@ -77,7 +77,7 @@ Written by the `interview` skill at the end of every interview (format and templ
 | `glossary.md` | Fixed name, only when terms were introduced or sharpened. `maintain-glossary` takes them into `GLOSSARY.md`. |
 | `assets/` | Screenshots and images the topic files link to, e.g. results of a UI or design prototype. Created only when there are images. |
 
-**While the interview runs** the folder also holds temporary files: `progress.md` (where the interview stands, so it can continue in a new chat) and `q<n>-<slug>.md` (visual aids for single questions). Both are deleted at the end; only the files above remain.
+**Temporary files:** `q<n>-<slug>.md` (visual aids for single questions; `.html` for a visual preview when no Artifact tool was available) while the interview runs, and `progress.md` only when the user paused the interview (where it stands, so it can continue in a new chat). Both are deleted at the end; only the files above remain.
 
 In feature planning, the topics are about *what* the feature does (no `adrs.md`, technical points stay open for a slice). In a slice, they are about *how*: e.g. structure, data, logic, UI, testing, as far as the slice needs them.
 

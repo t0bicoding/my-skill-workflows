@@ -67,6 +67,18 @@ A screenshot from `assets/` (e.g. from a prototype), otherwise a simple ASCII wi
 
 UI states as a table: `| State | What the user sees |` (empty, loading, error, success).
 
+## Colors
+
+A table of roles with a swatch in front of each value. The swatch is inline HTML: the VS Code preview shows the color, GitHub strips the style and shows only the code.
+
+| Role | Light | Dark |
+|---|---|---|
+| {Accent} | <span style="display:inline-block;width:.9em;height:.9em;border-radius:3px;border:1px solid #8888;vertical-align:middle;background:#0f766e"></span> `#0f766e` | <span style="display:inline-block;width:.9em;height:.9em;border-radius:3px;border:1px solid #8888;vertical-align:middle;background:#2bb5a5"></span> `#2bb5a5` |
+
+```html
+<span style="display:inline-block;width:.9em;height:.9em;border-radius:3px;border:1px solid #8888;vertical-align:middle;background:{#hex}"></span> `{#hex}`
+```
+
 ## Components
 
 Where components sit in a screen.

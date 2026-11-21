@@ -67,7 +67,7 @@ Starts a feature with a short interview. It proposes the next feature from `ROAD
 Plans the feature from the user's point of view: what it should do, what it should not do, which functions it has, and the user stories. Coding and testing decisions are deliberately left out; they are made per slice.
 
 - **Interview in rounds.** Each question comes with answer options and a recommendation. The user can ask back at any time. The rounds build on each other.
-- **Interview files.** At the end of the interview, the decisions are written by topic into `planning/interview/` (see "Interview files" below), and the user reviews them. If planning is interrupted, a temporary `progress.md` there lets `/feature` pick up in a new chat (e.g. the next day).
+- **Interview files.** At the end of the interview, the decisions are written by topic into `planning/interview/` (see "Interview files" below), and the user reviews them. If the user pauses the interview, a temporary `progress.md` there lets `/feature` pick up in a new chat (e.g. the next day).
 - **Spec only on confirmation.** When the feature is clarified enough, the user decides (or the AI recommends) to write `specifications.md` from the interview files. It is only written after the user explicitly confirms.
 - **Roadmap.** `roadmap.md` splits the feature into vertical slices following the tracer bullet principle: each slice cuts through all the layers it needs and delivers a testable result. The roadmap is the only place where the status of the slices is tracked (`open`, `in progress`, `done`).
 
@@ -189,7 +189,7 @@ Every interview ends with an `interview/` folder that holds its decisions, sorte
 | `glossary.md` | Only if terms were introduced or sharpened |
 | `assets/` | Screenshots, e.g. from a prototype |
 
-The files are short and factual. While the interview runs, the folder also holds temporary files (`progress.md` to continue in a new chat, `q<n>-….md` as visual aids for single questions); they are deleted at the end. Diagrams use Mermaid; the VS Code preview shows them with a Mermaid extension (e.g. `bierner.markdown-mermaid`).
+The files are short and factual. While the interview runs, the folder may hold temporary files (`q<n>-….md` as visual aids for single questions, `progress.md` only when the user paused the interview); they are deleted at the end. Diagrams use Mermaid; the VS Code preview shows them with a Mermaid extension (e.g. `bierner.markdown-mermaid`).
 
 ## Where things live
 
